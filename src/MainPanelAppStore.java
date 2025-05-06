@@ -1,8 +1,7 @@
 
-import MainPanel.BuyerSellerLogin;
-import MainPanel.BuyerSellerRegister;
 import entities.Cart;
 import entities.Product;
+import entities.user;
 
 import java.util.Scanner;
 
@@ -49,18 +48,20 @@ private static void login() {
     int choice = Integer.parseInt(sc.nextLine());
 
     switch (choice) {
-        case 1: // Buyer Login
-            buyerPanel();
+        case 1:
+            BuyerSellerLogin.handleBuyerLogin();  // Call the buyer login method
             break;
-        case 2: // Seller Login
-            sellerPanel();
+        case 2:
+            BuyerSellerLogin.handleSellerLogin();  // Call the seller login method
             break;
-        case 3: // Back to Main Menu
-            return;
+        case 3:
+            System.out.println("Returning to main menu...");
+            break;
         default:
             System.out.println("Invalid option. Try again.");
     }
 }
+
 
 // Register method (simplified)
 private static void register() {
@@ -84,135 +85,6 @@ private static void register() {
             System.out.println("Invalid option. Try again.");
     }
 }
-
-// Buyer Panel
-private static void buyerPanel() {
-    while (true) {
-        System.out.println("\n===== Buyer Panel =====");
-        System.out.println("1. View All Products");
-        System.out.println("2. Search Products");
-        System.out.println("3. Add Product to Cart");
-        System.out.println("4. View Cart");
-        System.out.println("5. Remove Product from Cart");
-        System.out.println("6. Place Order");
-        System.out.println("7. View My Orders");
-        System.out.println("8. Cancel Order");
-        System.out.println("9. Update Profile");
-        System.out.println("10. Logout");
-        System.out.print("Choose an option: ");
-        int choice = Integer.parseInt(sc.nextLine());
-
-        switch (choice) {
-            case 1:
-                Product.viewAllProducts();
-                break;
-            case 2: // Search Product
-                MobileManagment.searchProduct();
-                break;
-
-            case 3: // Add Product to Cart
-                System.out.println("Enter product ID to add to cart: ");
-                int productIdToAdd = Integer.parseInt(sc.nextLine());
-                System.out.println("Enter quantity: ");
-                int quantityToAdd = Integer.parseInt(sc.nextLine());
-                // Get logged-in user's ID
-                int userId = Login.getLoggedInUserId();
-                // Add product to the cart
-                Cart.addToCart(userId, productIdToAdd, quantityToAdd);
-                break;
-
-            case 4: // View Cart
-                userId=Login.getLoggedInUserId();
-                Cart.viewCart(userId);
-                break;
-
-            case 5: // Remove Product from Cart
-                userId=Login.getLoggedInUserId();
-
-                System.out.println("Enter product ID to remove from cart: ");
-                int productIdToRemove = Integer.parseInt(sc.nextLine());
-
-                // Call the method to remove product based on the user ID and product ID
-                removeFromCart(userId, productIdToRemove); // userId will be dynamically fetched based on login
-                break;
-            case 6:
-                // Implement Place Order
-                placeOrder();
-                break;
-            case 7:
-                // Implement View My Orders
-                System.out.println("View My Orders");
-                break;
-            case 8:
-                // Implement Cancel Order
-                System.out.println("Cancel Order");
-                break;
-            case 9:
-                // Implement Update Profile
-                System.out.println("Update Profile");
-                break;
-            case 10:
-                System.out.println("Logging out...");
-                return; // Logout and go back to Main Menu
-            default:
-                System.out.println("Invalid option. Try again.");
-        }
-    }
-}
-
-// Seller Panel
-private static void sellerPanel() {
-    while (true) {
-        System.out.println("\n===== Seller Panel =====");
-        System.out.println("1. Add New Product");
-        System.out.println("2. View My Products");
-        System.out.println("3. Update Product");
-        System.out.println("4. Delete Product");
-        System.out.println("5. View Orders Received");
-        System.out.println("6. Manage Stock");
-        System.out.println("7. Update Profile");
-        System.out.println("8. Logout");
-        System.out.print("Choose an option: ");
-        int choice = Integer.parseInt(sc.nextLine());
-
-        switch (choice) {
-            case 1:
-                // Implement Add New Product
-                System.out.println("Add New Product");
-                break;
-            case 2:
-                // Implement View My Products
-                System.out.println("View My Products");
-                break;
-            case 3:
-                // Implement Update Product
-                System.out.println("Update Product");
-                break;
-            case 4:
-                // Implement Delete Product
-                System.out.println("Delete Product");
-                break;
-            case 5:
-                // Implement View Orders Received
-                System.out.println("View Orders Received");
-                break;
-            case 6:
-                // Implement Manage Stock
-                System.out.println("Manage Stock");
-                break;
-            case 7:
-                // Implement Update Profile
-                System.out.println("Update Profile");
-                break;
-            case 8:
-                System.out.println("Logging out...");
-                return; // Logout and go back to Main Menu
-            default:
-                System.out.println("Invalid option. Try again.");
-        }
-    }
-}
-
 // Payment System (for buyers)
 private static void placeOrder() {
     System.out.println("\n===== Place Order =====");

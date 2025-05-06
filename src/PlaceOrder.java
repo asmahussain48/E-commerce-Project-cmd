@@ -1,4 +1,3 @@
-package MainPanel;
 
 import java.util.Scanner;
 

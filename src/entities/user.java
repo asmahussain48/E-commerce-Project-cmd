@@ -12,16 +12,6 @@ public class user {
     private String address;
     private String userType;
 
-    // Constructor for seller or buyer (used for both types of users)
-    public user(String username, String email, String password, String userType, String fullName, String phoneNumber, String address) {
-        this.username = username;
-        this.email = email;
-        this.password = password;
-        this.userType = userType; // 'buyer' or 'seller'
-        this.fullName = fullName;
-        this.phoneNumber = phoneNumber;
-        this.address = address;
-    }
 
     public boolean isBuyer() {
         return "buyer".equalsIgnoreCase(this.userType);
@@ -86,9 +76,17 @@ public class user {
     public void setAddress(String address) {
         this.address=address;
     }
-
-    public user(int userId, String username, String email, String accPassword, String fullName, String phoneNumber, String address, String userType) {
+    public user(String username, String email, String password, String userType, String fullName, String phoneNumber, String address) {
+        this.username = username;      // Assigning the parameter to the class field
+        this.email = email;
+        this.password = password;
+        this.userType = userType;      // 'buyer' or 'seller'
+        this.fullName = fullName;
+        this.phoneNumber = phoneNumber;
+        this.address = address;
     }
+
+
 
     public user(int userId, String username, String email, String password, String fullName, String phoneNumber, String address) {
         this.userId=userId;
@@ -129,7 +127,9 @@ public class user {
         String sql = "INSERT INTO users (username, email, acc_password, full_name, phone_number, address, user_type) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-        try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
             // Set the values for the PreparedStatement, including user_type
             stmt.setString(1, this.username);
             stmt.setString(2, this.email);
@@ -139,12 +139,16 @@ public class user {
             stmt.setString(6, this.address);
             stmt.setString(7, this.userType);  // Set user_type (buyer or seller)
 
+            // Execute the update
             int rows = stmt.executeUpdate();
+
             if (rows > 0) {
-                ResultSet rs = stmt.getGeneratedKeys();
-                if (rs.next()) {
-                    this.userId = rs.getInt(1);  // Fetch the auto-generated user_id
-                    System.out.println("User registered with ID: " + userId);
+                // Get the generated keys
+                try (ResultSet rs = stmt.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        this.userId = rs.getInt(1);  // Get the auto-generated user_id
+                        System.out.println("User registered with ID: " + userId);
+                    }
                 }
             }
         } catch (SQLException e) {
@@ -154,8 +158,24 @@ public class user {
 
 
 
-    //authentication of login
 
+    //authentication of login
+    // Authentication method
+    public static boolean authenticate(String username, String password, String userType) {
+        String sql = "SELECT * FROM users WHERE username = ? AND acc_password = ? AND user_type = ?";
+
+        try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, username);
+            stmt.setString(2, password);
+            stmt.setString(3, userType);
+            ResultSet rs = stmt.executeQuery();
+
+            return rs.next(); // Returns true if the user exists
+        } catch (SQLException e) {
+            System.out.println("Database error: " + e.getMessage());
+            return false;
+        }
+    }
 
 }
 

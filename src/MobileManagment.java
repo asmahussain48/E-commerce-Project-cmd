@@ -175,7 +175,7 @@ public class MobileManagment {
         }
     }
 
-    static void searchProduct() {
+    public static void searchProduct() {
         System.out.print("Enter brand or model to search: ");
         String keyword = sc.nextLine().toLowerCase();
         boolean found = false;

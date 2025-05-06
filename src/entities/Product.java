@@ -167,19 +167,6 @@ public class Product extends category {
         return null;
     }
 
-    // Display method for console apps
-//    public void display() {
-//        System.out.println("Product ID: " + id);
-//        System.out.println("Name: " + name);
-//        System.out.println("Brand: " + brand);
-//        System.out.println("Model: " + model);
-//        System.out.println("Description: " + productDescription);
-//        System.out.println("Price: $" + price);
-//        System.out.println("Quantity: " + quantity);
-//        System.out.println("Category Type: " + getType());
-//        System.out.println("Available: " + (isAvailable ? "Yes" : "No"));
-//        System.out.println("-----------------------------");
-//    }
     public void display() {
         System.out.printf("%-10s %-20s %-15s %-15s %-30s %-10s %-10s %-12s\n",
                 "ID", "Name", "Brand", "Model", "Description", "Price", "Quantity", "Available");

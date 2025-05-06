@@ -1,4 +1,3 @@
-package MainPanel;
 
 import entities.Product;
 
@@ -30,6 +29,7 @@ public class BuyerPanel {
                     break;
                 case 2:
                     // Implement Search Products
+                    MobileManagment.searchProduct();
                     System.out.println("Search Products");
                     break;
                 case 3:
