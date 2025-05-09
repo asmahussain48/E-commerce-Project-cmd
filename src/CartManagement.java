@@ -1,23 +1,33 @@
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Scanner;
+
 import entities.Product;
+import utils.DatabaseConnection;
+
+import static MainPanel.PayementOptions.*;
+import static entities.Cart.addToCart;
+
 public class CartManagement {
+    static Scanner sc = new Scanner(System.in);
 
-    public static void addToCart(ArrayList<Product> cart, Product newProduct) {
-        cart.add(newProduct);
-        System.out.println("Product added to cart.");
+    //Add Cart
+    public static void addProductToCart(int userId) {
+        // Collect the product ID and quantity from the user
+        System.out.print("Enter the product ID to add to cart: ");
+        int productId = Integer.parseInt(sc.nextLine());
+
+        System.out.print("Enter quantity: ");
+        int quantity = Integer.parseInt(sc.nextLine());
+
+        // Now call the addToCart method to insert the product into the cart
+        addToCart(userId, productId, quantity);  // Passing the collected data to addToCart()
     }
 
-    public static void viewCart(ArrayList<Product> cart) {
-        if (cart.isEmpty()) {
-            System.out.println("Your cart is empty.");
-            return;
-        }
-        System.out.println("Items in your cart:");
-        for (Product p : cart) {
-            p.display();
-        }
-    }
 
     public static void removeFromCart(ArrayList<Product> cart, Product productToRemove) {
         for (int i = 0; i < cart.size(); i++) {

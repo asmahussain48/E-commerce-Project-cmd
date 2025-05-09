@@ -1,14 +1,8 @@
-
-import entities.Cart;
-import entities.Product;
-import entities.user;
-
 import java.util.Scanner;
 
-import static entities.Cart.removeFromCart;
 import static entities.Cart.reviewCart;
 
-public class MainPanelAppStore {
+public class MainRunMobileApp {
 
 static Scanner sc = new Scanner(System.in);
     static int userId = Login.getLoggedInUserId();  // Assuming this method exists in your Login class

@@ -36,6 +36,10 @@ public class Login {
             if (rs.next()) {
                 int userId = rs.getInt("user_id");
                 String fullName = rs.getString("full_name");
+
+                // Store logged-in user session
+                UserSession.setUserSession(username, userId);  // Save username and user_id
+
                 // Create user object with the fetched details
                 user loggedInUser = new user(
                         username,
@@ -54,6 +58,7 @@ public class Login {
 
         return null; // If login fails
     }
+
 }
 
 

@@ -1,4 +1,5 @@
 
+import entities.Cart;
 import entities.Product;
 
 import java.util.Scanner;
@@ -23,22 +24,23 @@ public class BuyerPanel {
 
             switch (choice) {
                 case 1:
-                    // Implement View All Products
                     System.out.println("View All Products");
                     Product.viewAllProducts();
                     break;
                 case 2:
-                    // Implement Search Products
-                    MobileManagment.searchProduct();
                     System.out.println("Search Products");
+                    MobileManagment.searchProduct();
+
                     break;
                 case 3:
-                    // Implement Add Product to Cart
                     System.out.println("Add Product to Cart");
+                    CartManagement.addProductToCart(UserSession.getUserId());
+
                     break;
                 case 4:
                     // Implement View Cart
                     System.out.println("View Cart");
+                    Cart.viewCart(UserSession.getUserId());
                     break;
                 case 5:
                     // Implement Remove Product from Cart

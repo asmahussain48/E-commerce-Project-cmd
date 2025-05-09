@@ -1,6 +1,5 @@
 
 import entities.user;
-
 import java.util.Scanner;
 
 public class BuyerSellerLogin {
@@ -15,7 +14,6 @@ public class BuyerSellerLogin {
         if (user.authenticate(username, password, "buyer")) {
             System.out.println("Buyer logged in successfully!");
             BuyerPanel.buyerPanel();
-            // Here you can add further actions for buyer
         } else {
             System.out.println("Invalid credentials. Please try again.");
         }
@@ -27,7 +25,7 @@ public class BuyerSellerLogin {
         System.out.print("Enter Seller Password: ");
         String password = sc.nextLine();
 
-        if (user.authenticate(username, password, "seller")) {
+        if (user.authenticate(username, password,"seller")) {
             System.out.println("Seller logged in successfully!");
             SellerPanel.sellerPanel();
             // Here you can add further actions for seller

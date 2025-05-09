@@ -19,11 +19,10 @@ public class SellerPanel {
 
             switch (choice) {
                 case 1:
-                    // Implement Add New Product
+
                     System.out.println("Add New Product");
                     break;
                 case 2:
-                    // Implement View My Products
                     System.out.println("View My Products");
                     break;
                 case 3:

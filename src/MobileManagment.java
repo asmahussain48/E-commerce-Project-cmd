@@ -177,18 +177,12 @@ public class MobileManagment {
 
     public static void searchProduct() {
         System.out.print("Enter brand or model to search: ");
-        String keyword = sc.nextLine().toLowerCase();
-        boolean found = false;
-        for (Product product : products) {
-            if (product.getBrand().toLowerCase().contains(keyword) || product.getModel().toLowerCase().contains(keyword)) {
-                product.display();
-                found = true;
-            }
-        }
-        if (!found) {
-            System.out.println("No matching mobile found.");
-        }
+        String keyword = sc.nextLine();  // User input for search
+        Product.searchProduct(keyword);  // Call the static searchProduct method in the Product class
     }
+
+
+
 
     static boolean askAvailability() {
         while (true) {

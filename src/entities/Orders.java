@@ -1,5 +1,7 @@
 package entities;
 
+import utils.DatabaseConnection;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -70,23 +72,17 @@ public class Orders {
         System.out.println("Payment Status  : " + paymentStatus);
         System.out.println("--------------------------");
     }
-
-    public static Connection getConnection() throws SQLException {
-        String url = "jdbc:mysql://localhost:3306/ecommerce_db"; // change DB name if needed
-        String user = "root"; // your DB username
-        String pass = "Root"; // your DB password
-        return DriverManager.getConnection(url, user, pass);
-    }
     public void saveToDatabase() {
         String sql = "INSERT INTO orders (orders_user_id, total_amount, status, payment_status) VALUES (?, ?, ?, ?)";
 
-        try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, this.ordersUserId);
-            stmt.setDouble(2, this.totalAmount);
-            stmt.setString(3, this.status);
-            stmt.setString(4, this.paymentStatus);
+        try (Connection con = DatabaseConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, this.ordersUserId);
+            ps.setDouble(2, this.totalAmount);
+            ps.setString(3, this.status);
+            ps.setString(4, this.paymentStatus);
 
-            int rows = stmt.executeUpdate();
+            int rows = ps.executeUpdate();
             if (rows > 0) {
                 System.out.println("Order saved successfully.");
             } else {

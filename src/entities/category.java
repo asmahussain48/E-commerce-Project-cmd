@@ -1,5 +1,7 @@
 package entities;
 
+import utils.DatabaseConnection;
+
 import java.sql.*;
 
 public class category {
@@ -58,18 +60,10 @@ public class category {
     public void setDescription(String description) {
         this.description=description;
     }
-
-    private Connection getConnection() throws SQLException {
-        String url = "jdbc:mysql://localhost:3306/your_database"; // Change your_database
-        String user = "root";     // Change if needed
-        String password = "your_password"; // Change if needed
-        return DriverManager.getConnection(url, user, password);
-    }
-
     // === Save to Database ===
     public void saveToDatabase() {
         String sql = "INSERT INTO categories (name, type, description) VALUES (?, ?, ?)";
-        try (Connection con = getConnection();
+        try (Connection con = DatabaseConnection.getConnection();
              PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             ps.setString(1, name);

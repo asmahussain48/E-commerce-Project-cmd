@@ -1,37 +1,25 @@
 package entities;
+import utils.DatabaseConnection;
 
 import java.sql.*;
 
 public class Cart {
-
     private int id;
-    private int userId;
     private int productId;
     private int quantity;
 
-    public Cart() {}
-
-    public Cart(int userId, int productId, int quantity) {
-        this.userId = userId;
-        this.productId = productId;
-        this.quantity = quantity;
+    public Cart(int id, int productId, int quantity) {
+        this.id=id;
+        this.productId=productId;
+        this.quantity=quantity;
     }
 
-    // Getters and Setters
     public int getId() {
         return id;
     }
 
     public void setId(int id) {
-        this.id = id;
-    }
-
-    public int getUserId() {
-        return userId;
-    }
-
-    public void setUserId(int userId) {
-        this.userId = userId;
+        this.id=id;
     }
 
     public int getProductId() {
@@ -39,7 +27,7 @@ public class Cart {
     }
 
     public void setProductId(int productId) {
-        this.productId = productId;
+        this.productId=productId;
     }
 
     public int getQuantity() {
@@ -47,31 +35,26 @@ public class Cart {
     }
 
     public void setQuantity(int quantity) {
-        this.quantity = quantity;
+        this.quantity=quantity;
     }
 
-    // Database connection method
     public static Connection getConnection() throws SQLException {
-        String url = "jdbc:mysql://localhost:3306/ecommerce_db"; // Update if your DB is named differently
-        String user = "root"; // Your MySQL username
-        String pass = "Root"; // Your MySQL password
+        String url = "jdbc:mysql://localhost:3306/ecommerce_db";
+        String user = "root";
+        String pass = "Root";
         return DriverManager.getConnection(url, user, pass);
     }
-
     // Add product to cart in the database
     public static void addToCart(int userId, int productId, int quantity) {
         String sql = "INSERT INTO cart (user_id, product_id, quantity) VALUES (?, ?, ?)";
 
-        try (Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/ecommerce_db", "root", "Root");
-             PreparedStatement ps = con.prepareStatement(sql)) {
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, userId);
+            stmt.setInt(2, productId);
+            stmt.setInt(3, quantity);
 
-            // Set parameters
-            ps.setInt(1, userId);  // The logged-in user's ID
-            ps.setInt(2, productId);  // The ID of the product the user is adding
-            ps.setInt(3, quantity);  // The quantity the user wants to add
-
-            // Execute the insert query
-            int rows = ps.executeUpdate();
+            int rows = stmt.executeUpdate();
             if (rows > 0) {
                 System.out.println("Product added to cart successfully.");
             } else {
@@ -85,14 +68,15 @@ public class Cart {
 
 
     // View all products in the cart
+    /*
+    This code loops through each product in the cart (from the database query result)
+    and prints the product’s details in a formatted way (with spaces for alignment).
+     */
     public static void viewCart(int userId) {
         // SQL query to select all products from the cart based on the user ID
-        String sql = "SELECT p.id, p.name, p.brand, p.model, p.product_description, p.price, c.quantity " +
-                "FROM cart c " +
-                "JOIN products p ON c.product_id = p.id " +
-                "WHERE c.user_id = ?";
+        String sql = "SELECT * FROM cart";
 
-        try (Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/ecommerce_db", "root", "Root");
+        try (Connection con = DatabaseConnection.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
 
             // Set the userId parameter to the SQL query
@@ -107,8 +91,8 @@ public class Cart {
             System.out.println("----------------------------------------------------------------------------------------");
 
             // Loop through the result set and display the products in the cart
-            boolean isEmpty = true;
-            while (rs.next()) {
+            boolean isEmpty = true;  //we assume the cart is empty at first.
+            while (rs.next()) {  // While there is a next row in the result set
                 isEmpty = false; // Found at least one product in cart
                 System.out.printf("%-10d %-20s %-15s %-15s %-30s $%-10.2f %-10d\n",
                         rs.getInt("id"),
@@ -134,7 +118,7 @@ public class Cart {
     public static void removeFromCart(int userId, int productIdToRemove) {
         String sql = "DELETE FROM cart WHERE user_id = ? AND product_id = ?";
 
-        try (Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/ecommerce_db", "root", "Root");
+        try (Connection con = DatabaseConnection.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setInt(1, userId);  // Set the user ID
@@ -160,7 +144,7 @@ public class Cart {
                 "JOIN products p ON c.product_id = p.id " +
                 "WHERE c.user_id = ?";
 
-        try (Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/ecommerce_db", "root", "Root");
+        try (Connection con = DatabaseConnection.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setInt(1, userId); // Set the user ID
@@ -194,7 +178,8 @@ public class Cart {
     public static void updateCart(int userId, int productId, int newQuantity) {
         String sql = "UPDATE cart SET quantity = ? WHERE user_id = ? AND product_id = ?";
 
-        try (Connection con = getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+        try (Connection con = DatabaseConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)){
             ps.setInt(1, newQuantity); // Set the new quantity
             ps.setInt(2, userId); // Set user ID
             ps.setInt(3, productId); // Set product ID
