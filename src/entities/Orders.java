@@ -2,10 +2,7 @@ package entities;
 
 import utils.DatabaseConnection;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class Orders {
     private int id;
@@ -15,6 +12,14 @@ public class Orders {
     private String paymentStatus;
 
     public Orders() {
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id=id;
     }
 
     public Orders(int id, int ordersUserId, double totalAmount, String status, String paymentStatus) {
@@ -92,6 +97,50 @@ public class Orders {
             System.out.println("Database error: " + e.getMessage());
         }
     }
+    public static void viewOrdersByUserId(int userId) {
+        String query = "SELECT * FROM orders WHERE orders_user_id = ?";
+
+        try (Connection con = DatabaseConnection.getConnection();
+             PreparedStatement stmt = con.prepareStatement(query)) {
+
+            stmt.setInt(1, userId);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                int orderId = rs.getInt("id");
+                double totalAmount = rs.getDouble("total_amount");
+                String status = rs.getString("status");
+                String paymentStatus = rs.getString("payment_status");
+
+                // Create an Order object and display its details
+                Orders order = new Orders(orderId, userId, totalAmount, status, paymentStatus);
+                order.display();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void cancelOrder(int orderId) {
+        String query = "UPDATE orders SET status = 'cancelled' WHERE id = ?";
+
+        try (Connection con = DatabaseConnection.getConnection();
+             PreparedStatement stmt = con.prepareStatement(query)) {
+
+            stmt.setInt(1, orderId);
+            int rowsUpdated = stmt.executeUpdate();
+
+            if (rowsUpdated > 0) {
+                System.out.println("Order canceled successfully.");
+            } else {
+                System.out.println("Failed to cancel the order.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+
 }
 /*
 Class Name:

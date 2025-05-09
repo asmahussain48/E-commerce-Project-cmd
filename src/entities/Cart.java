@@ -7,12 +7,48 @@ public class Cart {
     private int id;
     private int productId;
     private int quantity;
+    private int userId;
+    private double totalAmount;  // Instance variable to store the total amount
+
+    // Getter and Setter for totalAmount
+    public double getTotalAmount() {
+        return totalAmount;
+    }
+
+    public void setTotalAmount(double totalAmount) {
+        this.totalAmount = totalAmount;
+    }
 
     public Cart(int id, int productId, int quantity) {
         this.id=id;
         this.productId=productId;
         this.quantity=quantity;
     }
+
+    public static double getTotalAmount(int userId) {
+        double totalAmount = 0.0;
+
+        // SQL query to get all products in the cart for the given user
+        String query = "SELECT p.price, c.quantity FROM cart c JOIN products p ON c.product_id = p.id WHERE c.user_id = ?";
+
+        try (Connection con = DatabaseConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(query)) {
+            ps.setInt(1, userId);  // Set the user ID in the query
+            ResultSet rs = ps.executeQuery();
+
+            // Loop through the results and calculate the total amount
+            while (rs.next()) {
+                double price = rs.getDouble("price");  // Product price
+                int quantity = rs.getInt("quantity");  // Product quantity in the cart
+                totalAmount += price * quantity;  // Add the total cost for the product to the total amount
+            }
+        } catch (SQLException e) {
+            System.out.println("Error calculating total amount: " + e.getMessage());
+        }
+
+        return totalAmount;
+    }
+
 
     public int getId() {
         return id;
@@ -38,12 +74,6 @@ public class Cart {
         this.quantity=quantity;
     }
 
-    public static Connection getConnection() throws SQLException {
-        String url = "jdbc:mysql://localhost:3306/ecommerce_db";
-        String user = "root";
-        String pass = "Root";
-        return DriverManager.getConnection(url, user, pass);
-    }
     // Add product to cart in the database
     public static void addToCart(int userId, int productId, int quantity) {
         String sql = "INSERT INTO cart (user_id, product_id, quantity) VALUES (?, ?, ?)";
@@ -66,6 +96,24 @@ public class Cart {
         }
     }
 
+    public static void clearCart(int userId) {
+        // SQL query to delete all items from the cart for the given user
+        String query = "DELETE FROM cart WHERE user_id = ?";
+
+        try (Connection con = DatabaseConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(query)) {
+            ps.setInt(1, userId);  // Set the user ID to clear the cart for that user
+
+            int rowsAffected = ps.executeUpdate();  // Execute the delete query
+            if (rowsAffected > 0) {
+                System.out.println("Cart cleared successfully.");
+            } else {
+                System.out.println("No items to remove from the cart.");
+            }
+        } catch (SQLException e) {
+            System.out.println("Error clearing the cart: " + e.getMessage());
+        }
+    }
 
     // View all products in the cart
     /*
@@ -74,13 +122,16 @@ public class Cart {
      */
     public static void viewCart(int userId) {
         // SQL query to select all products from the cart based on the user ID
-        String sql = "SELECT * FROM cart";
+        String sql = "SELECT c.id, p.name, p.brand, p.model, p.product_description, p.price, c.quantity " +
+                "FROM cart c " +
+                "JOIN products p ON c.product_id = p.id " +
+                "WHERE c.user_id = ?";  // Join cart with products to get product details
 
         try (Connection con = DatabaseConnection.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
 
             // Set the userId parameter to the SQL query
-            ps.setInt(1, userId);
+            ps.setInt(1, userId);  // Set the user_id parameter
 
             // Execute the query and get the results
             ResultSet rs = ps.executeQuery();
@@ -91,9 +142,9 @@ public class Cart {
             System.out.println("----------------------------------------------------------------------------------------");
 
             // Loop through the result set and display the products in the cart
-            boolean isEmpty = true;  //we assume the cart is empty at first.
+            boolean isEmpty = true;  // Assume the cart is empty initially
             while (rs.next()) {  // While there is a next row in the result set
-                isEmpty = false; // Found at least one product in cart
+                isEmpty = false;  // Found at least one product in cart
                 System.out.printf("%-10d %-20s %-15s %-15s %-30s $%-10.2f %-10d\n",
                         rs.getInt("id"),
                         rs.getString("name"),
@@ -112,6 +163,7 @@ public class Cart {
             System.out.println("Error fetching cart items: " + e.getMessage());
         }
     }
+
 
 
     // Remove a product from the cart

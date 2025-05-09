@@ -3,7 +3,9 @@ import utils.DatabaseConnection;
 
 import java.sql.*;
 
-import static entities.Cart.getConnection;
+import entities.*;
+import utils.DatabaseConnection.*;
+
 
 
 public class user {
@@ -101,7 +103,7 @@ public class user {
          if you're inserting data into a table with an auto-generated primary key (like an ID),
          you wouldn't be able to retrieve that new key (like the ID of the new seller). This flag allows you to get that key.
        */
-        try   (Connection conn = getConnection();
+        try   (Connection conn = DatabaseConnection.getConnection();
                PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)){
 
             // Set the values for the PreparedStatement, including user_type

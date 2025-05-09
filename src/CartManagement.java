@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import entities.Cart;
 import entities.Product;
 import utils.DatabaseConnection;
 
@@ -29,16 +30,6 @@ public class CartManagement {
     }
 
 
-    public static void removeFromCart(ArrayList<Product> cart, Product productToRemove) {
-        for (int i = 0; i < cart.size(); i++) {
-            if (cart.get(i).equals(productToRemove)) {
-                cart.remove(i);
-                System.out.println("Product removed from cart.");
-                return;
-            }
-        }
-        System.out.println("Product not found in cart.");
-    }
 
     public static void updateCart(ArrayList<Product> cart, Product oldProduct, Product newProduct) {
         for (int i = 0; i < cart.size(); i++) {

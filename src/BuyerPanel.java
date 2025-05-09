@@ -1,5 +1,7 @@
 
 import entities.Cart;
+import entities.Orders;
+import entities.PlaceOrder;
 import entities.Product;
 
 import java.util.Scanner;
@@ -45,28 +47,32 @@ public class BuyerPanel {
                 case 5:
                     // Implement Remove Product from Cart
                     System.out.println("Remove Product from Cart");
+                    System.out.print("Enter the product ID to Remove from cart: ");
+                    int productId = Integer.parseInt(sc.nextLine());
+                    Cart.removeFromCart(UserSession.getUserId(), productId);
                     break;
+
                 case 6:
                     // Implement Place Order
-                    PlaceOrder.placeOrder();
+                    System.out.println("Place Order");
+                    PlaceOrder.placeOrder(UserSession.getUserId());
                     break;
                 case 7:
                     // Implement View My Orders
-                    System.out.println("View My Orders");
+                    Orders.viewOrdersByUserId(UserSession.getUserId()); // Call method to view orders
                     break;
                 case 8:
-                    // Implement Cancel Order
-                    System.out.println("Cancel Order");
+                    System.out.print("Enter your Order ID to cancel: ");
+                    int orderId = sc.nextInt();
+                    Orders.cancelOrder(orderId);// Call method to cancel order
                     break;
                 case 9:
-                    // Implement Update Profile
-                    System.out.println("Update Profile");
-                    break;
-                case 10:
+                    // Implement Logout
                     System.out.println("Logging out...");
-                    return; // Logout and go back to Main Menu
+                    break;
                 default:
-                    System.out.println("Invalid option. Try again.");
+                    System.out.println("Invalid option. Please try again.");
+                    break;
             }
         }
     }
