@@ -96,24 +96,6 @@ public class Cart {
         }
     }
 
-    public static void clearCart(int userId) {
-        // SQL query to delete all items from the cart for the given user
-        String query = "DELETE FROM cart WHERE user_id = ?";
-
-        try (Connection con = DatabaseConnection.getConnection();
-             PreparedStatement ps = con.prepareStatement(query)) {
-            ps.setInt(1, userId);  // Set the user ID to clear the cart for that user
-
-            int rowsAffected = ps.executeUpdate();  // Execute the delete query
-            if (rowsAffected > 0) {
-                System.out.println("Cart cleared successfully.");
-            } else {
-                System.out.println("No items to remove from the cart.");
-            }
-        } catch (SQLException e) {
-            System.out.println("Error clearing the cart: " + e.getMessage());
-        }
-    }
 
     // View all products in the cart
     /*
@@ -163,18 +145,39 @@ public class Cart {
             System.out.println("Error fetching cart items: " + e.getMessage());
         }
     }
+    public static void clearCart(int userId) {
+        String sql = "DELETE FROM cart WHERE user_id = ?";  // Delete all items for the given user_id
+
+        try (Connection con = DatabaseConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, userId);  // Set the user_id parameter to identify the cart
+
+            int rowsAffected = ps.executeUpdate();  // Execute the query
+
+            if (rowsAffected > 0) {
+                System.out.println("Cart cleared successfully.");
+            } else {
+                System.out.println("No items found in the cart for this user.");
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error clearing the cart: " + e.getMessage());
+        }
+    }
 
 
 
-    // Remove a product from the cart
-    public static void removeFromCart(int userId, int productIdToRemove) {
-        String sql = "DELETE FROM cart WHERE user_id = ? AND product_id = ?";
+
+    // Remove a product from the cart by cart_item_id
+    public static void removeFromCart(int userId, int cartItemId) {
+        String sql = "DELETE FROM cart WHERE user_id = ? AND id = ?";  // id is the primary key in the cart
 
         try (Connection con = DatabaseConnection.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setInt(1, userId);  // Set the user ID
-            ps.setInt(2, productIdToRemove);  // Set the product ID
+            ps.setInt(2, cartItemId);  // Set the cart item ID
 
             int rows = ps.executeUpdate();
             if (rows > 0) {
@@ -189,6 +192,7 @@ public class Cart {
             System.out.println("Error removing product from cart: " + e.getMessage());
         }
     }
+
     public static void reviewCart(int userId) {
         // SQL query to select all products from the cart based on the user ID
         String sql = "SELECT p.id, p.name, p.brand, p.model, p.product_description, p.price, c.quantity " +

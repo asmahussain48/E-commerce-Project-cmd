@@ -1,8 +1,5 @@
 
-import entities.Cart;
-import entities.Orders;
-import entities.PlaceOrder;
-import entities.Product;
+import entities.*;
 
 import java.util.Scanner;
 

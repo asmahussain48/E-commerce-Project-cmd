@@ -8,9 +8,24 @@ import java.util.Scanner;
 public class PlaceOrder {
 
     static Scanner sc=new Scanner(System.in);
-
+    public static boolean userExists(int userId) {
+        String query = "SELECT 1 FROM users WHERE user_id = ?";
+        try (Connection con = DatabaseConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(query)) {
+            ps.setInt(1, userId);
+            ResultSet rs = ps.executeQuery();
+            return rs.next();  // If user exists, it will return true
+        } catch (SQLException e) {
+            System.out.println("Error checking user existence: " + e.getMessage());
+        }
+        return false;
+    }
     // Method to place an order
     public static void placeOrder(int userId) {
+        if (!userExists(userId)) {
+            System.out.println("Invalid user ID. Please ensure the user is registered and logged in.");
+            return;
+        }
                 double totalAmount = Cart.getTotalAmount(userId); // Calculate the total amount from the cart
         if (totalAmount == 0) {
             System.out.println("Your cart is empty. Add products to the cart first.");
@@ -90,4 +105,7 @@ public class PlaceOrder {
             System.out.println("Error updating product stock: " + e.getMessage());
         }
     }
+
+
+
 }

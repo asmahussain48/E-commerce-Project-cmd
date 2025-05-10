@@ -1,11 +1,8 @@
 package entities;
 import utils.DatabaseConnection;
 
+
 import java.sql.*;
-
-import entities.*;
-import utils.DatabaseConnection.*;
-
 
 
 public class user {
@@ -96,39 +93,25 @@ public class user {
         System.out.println("--------------------------");
     }
     public void saveToDatabase() {
-        // Updated SQL query to include user_type
-        String sql = "INSERT INTO users (username, email, acc_password, full_name, phone_number, address, user_type) " +
+        String sql = "INSERT INTO users (username, email, acc_password, user_type, full_name, phone_number, address) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?)";
-        /*Statement.RETURN_GENERATED_KEYS: Without this,
-         if you're inserting data into a table with an auto-generated primary key (like an ID),
-         you wouldn't be able to retrieve that new key (like the ID of the new seller). This flag allows you to get that key.
-       */
-        try   (Connection conn = DatabaseConnection.getConnection();
-               PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)){
 
-            // Set the values for the PreparedStatement, including user_type
+        try (Connection con = DatabaseConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
             ps.setString(1, this.username);
             ps.setString(2, this.email);
-            ps.setString(3, this.password);
-            ps.setString(4, this.fullName);
-            ps.setString(5, this.phoneNumber);
-            ps.setString(6, this.address);
-            ps.setString(7, this.userType);  // Set user_type (buyer or seller)
+            ps.setString(3, this.password);  // Hash the password in real-world scenarios
+            ps.setString(4, this.userType);  // Set userType here
+            ps.setString(5, this.fullName);
+            ps.setString(6, this.phoneNumber);
+            ps.setString(7, this.address);
 
-            // Execute the update
-            int rows = ps.executeUpdate();
+            ps.executeUpdate();
+            System.out.println("User saved successfully.");
 
-            if (rows > 0) {
-                // Get the generated keys
-                try (ResultSet rs = ps.getGeneratedKeys()) {
-                    if (rs.next()) {
-                        this.userId = rs.getInt(1);  // Get the auto-generated user_id
-                        System.out.println("User registered with ID: " + userId);
-                    }
-                }
-            }
         } catch (SQLException e) {
-            System.out.println("Database error: " + e.getMessage());
+            System.out.println("Error saving user: " + e.getMessage());
         }
     }
 
@@ -154,64 +137,79 @@ public class user {
 
         return userId;  // Return the user ID
     }
-    public static user authenticateUserId(String username, String password, String userType) {
-        String sql = "SELECT * FROM users WHERE username = ? AND acc_password = ? AND user_type = ?";
-
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setString(1, username);
-            stmt.setString(2, password);
-            stmt.setString(3, userType);
-
-            ResultSet rs = stmt.executeQuery();
-
-            if (rs.next()) {
-                int userId = rs.getInt("user_id");
-                String fullName = rs.getString("full_name");
-
-                user loggedInUser = new user(
-                        username,
-                        rs.getString("email"),
-                        password,
-                        fullName,
-                        rs.getString("phone_number"),
-                        rs.getString("address"),
-                        userType
-                );
-                loggedInUser.setUserId(userId);
-                return loggedInUser;
-            }
-
-        } catch (SQLException e) {
-            System.out.println("Error fetching user: " + e.getMessage());
-        }
-
-        return null;
-    }
-
+//    public static user authenticateUserId(String username, String password, String userType) {
+//        String sql = "SELECT * FROM users WHERE username = ? AND acc_password = ? AND user_type = ?";
+//
+//        try (Connection conn = DatabaseConnection.getConnection();
+//             PreparedStatement stmt = conn.prepareStatement(sql)) {
+//
+//            stmt.setString(1, username);
+//            stmt.setString(2, password);
+//            stmt.setString(3, userType);
+//
+//            ResultSet rs = stmt.executeQuery();
+//
+//            if (rs.next()) {
+//                int userId = rs.getInt("id");  // Get the user ID from the database
+//                String fullName = rs.getString("full_name");
+//
+//                // Create a new user object
+//                user loggedInUser = new user(
+//                        username,
+//                        rs.getString("email"),
+//                        password,
+//                        fullName,
+//                        rs.getString("phone_number"),
+//                        rs.getString("address"),
+//                        userType
+//                );
+//
+//                loggedInUser.setUserId(userId);  // Set the user ID in the user object
+//
+//                // Set the user session with the logged-in user's details
+//                UserSession.setUserSession(username, userId);  // Save the user session
+//
+//                return loggedInUser;
+//            }
+//
+//        } catch (SQLException e) {
+//            System.out.println("Error fetching user: " + e.getMessage());
+//        }
+//
+//        return null;
+//    }
     //authentication of login
     // Authentication method
-    public static boolean authenticate(String username, String password, String userType) {
-        String sql = "SELECT * FROM users WHERE username = ? AND acc_password = ? AND user_type = ?";
-        // Establishes a database connection and prepares a SQL statement for execution
-        // The 'con' object represents the database connection, and 'ps' is used to set and execute the query.
-
-        try (Connection con = DatabaseConnection.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setString(1, username);
-            ps.setString(2, password);
-            ps.setString(3, userType);
-            ResultSet rs = ps.executeQuery();
-
-            return rs.next(); // Returns true if the user exists
-        } catch (SQLException e) {
-            System.out.println("Database error: " + e.getMessage());
-            return false;
-        }
-    }
+//public static boolean authenticate(String username, String password, String userType) {
+//    String sql = "SELECT * FROM users WHERE username = ? AND acc_password = ? AND user_type = ?";
+//
+//    try (Connection conn = DatabaseConnection.getConnection();
+//         PreparedStatement stmt = conn.prepareStatement(sql)) {
+//        stmt.setString(1, username);
+//        stmt.setString(2, password);
+//        stmt.setString(3, userType);
+//        ResultSet rs = stmt.executeQuery();
+//
+//        if (rs.next()) {
+//            int userId = rs.getInt("user_id");
+//            String fetchedUsername = rs.getString("username");
+//
+//
+//            //UserSession.setUserSession(username);
+//
+//            return true; // Authentication successful
+//        }
+//
+//        return false; // User not found
+//
+//    } catch (SQLException e) {
+//        System.out.println("Database error: " + e.getMessage());
+//        return false;
+//    }
 
 }
+
+
 
 
 

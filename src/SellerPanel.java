@@ -21,29 +21,36 @@ public class SellerPanel {
                 case 1:
 
                     System.out.println("Add New Product");
+                    ProductManager.addNewProduct();
                     break;
                 case 2:
                     System.out.println("View My Products");
+
                     break;
                 case 3:
                     // Implement Update Product
                     System.out.println("Update Product");
+                    ProductManager.updateProduct(UserSession.getUserId());
                     break;
                 case 4:
                     // Implement Delete Product
                     System.out.println("Delete Product");
+                    ProductManager.deleteProduct(UserSession.getUserId());
                     break;
                 case 5:
                     // Implement View Orders Received
                     System.out.println("View Orders Received");
+                    ProductManager.viewOrdersReceived(UserSession.getUserId());
                     break;
                 case 6:
                     // Implement Manage Stock
                     System.out.println("Manage Stock");
+                    ProductManager.manageStock(UserSession.getUserId());
                     break;
                 case 7:
                     // Implement Update Profile
                     System.out.println("Update Profile");
+                    ProductManager.updateProfile(UserSession.getUserId());
                     break;
                 case 8:
                     System.out.println("Logging out...");

@@ -38,7 +38,7 @@ public class Login {
                 String fullName = rs.getString("full_name");
 
                 // Store logged-in user session
-                UserSession.setUserSession(username, userId);  // Save username and user_id
+                UserSession.setUserSession(username);  // Save username and user_id
 
                 // Create user object with the fetched details
                 user loggedInUser = new user(

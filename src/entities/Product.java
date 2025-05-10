@@ -166,6 +166,62 @@ public class Product extends category {
 
         return null;
     }
+    public void saveToDatabaseWithCategory(int categoryId) {
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            String sql = "INSERT INTO products (category_id, name, brand, model, product_description, price, quantity, is_available) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, categoryId);
+            stmt.setString(2, name);
+            stmt.setString(3, brand);
+            stmt.setString(4, model);
+            stmt.setString(5, productDescription);
+            stmt.setDouble(6, price);
+            stmt.setInt(7, quantity);
+            stmt.setBoolean(8, isAvailable);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("Database error: " + e.getMessage());
+        }
+    }
+
+    public static void viewMyProducts(int sellerId) {
+        String sql = "SELECT * FROM products WHERE seller_id = ?";
+        try (Connection con = DatabaseConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, sellerId);
+            ResultSet rs = ps.executeQuery();
+
+            boolean found = false;
+
+            System.out.printf("%-10s %-20s %-15s %-15s %-30s %-10s %-10s %-12s\n",
+                    "ID", "Name", "Brand", "Model", "Description", "Price", "Quantity", "Available");
+            System.out.println("----------------------------------------------------------------------------------------");
+
+            while (rs.next()) {
+                Product product = new Product(
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getString("brand"),
+                        rs.getString("model"),
+                        rs.getString("product_description"),
+                        rs.getDouble("price"),
+                        rs.getInt("quantity"),
+                        rs.getBoolean("is_available")
+                );
+                product.display();
+                found = true;
+            }
+
+            if (!found) {
+                System.out.println("No products found for this seller.");
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error fetching seller products: " + e.getMessage());
+        }
+    }
 
     public void display() {
         System.out.printf("%-10s %-20s %-15s %-15s %-30s %-10s %-10s %-12s\n",
