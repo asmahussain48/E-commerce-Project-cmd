@@ -6,7 +6,7 @@ public class MainRunMobileApp {
 
 static Scanner sc = new Scanner(System.in);
     static int userId = Login.getLoggedInUserId();  // Assuming this method exists in your Login class
-
+//this project is using command line latter will work on GUI
 public static void main(String[] args) {
     while (true) {
         System.out.println("\n===== Main Menu =====");
