@@ -17,7 +17,7 @@ public class Register {
         String phone = scanner.nextLine();
         System.out.print("Enter address: ");
         String address = scanner.nextLine();
-
+//project building for Register
         user newUser = new user(username, email, password, fullName, phone, address);
         newUser.saveToDatabase();
     }
